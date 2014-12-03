@@ -14,9 +14,6 @@ func TestGetQuote(t *testing.T) {
         t.Errorf("Query Error: %s", err)
     }
     fmt.Print()
-    // if stock == nil {
-    //     t.Errorf("Stock empty!")
-    // }
 }
 
 func TestGetQuotes(t *testing.T) {
@@ -26,6 +23,7 @@ func TestGetQuotes(t *testing.T) {
     if err != nil {
         t.Errorf("Query Error: %s", err)       
     }
+    
     if len(stocks) != len(testData){
         t.Errorf("Data count mismatch.  Found: %d Expected: %d", len(stocks), len(testData))
     }

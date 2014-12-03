@@ -14,7 +14,7 @@ import (
 
 const quoteTable = "yahoo.finance.quote"
 
-type Symbol struct {
+type Quote struct {
     Name, Symbol string
     AvgDailyVolume uint64
     Change float64
@@ -27,37 +27,37 @@ type Symbol struct {
     StockExchange string
 }
 
-func (s *Symbol) Populate(v map[string]interface{}) {
-    s.Name = v["Name"].(string)
-    s.Symbol = v["Symbol"].(string)
-    s.AvgDailyVolume, _ = strconv.ParseUint(v["AverageDailyVolume"].(string), 0, 64)
-    s.Change, _ = strconv.ParseFloat(v["Change"].(string), 64)
-    s.DaysLow, _ = strconv.ParseFloat(v["DaysLow"].(string), 64)
-    s.DaysHigh, _ = strconv.ParseFloat(v["DaysHigh"].(string), 64)
-    s.YearLow, _ = strconv.ParseFloat(v["YearLow"].(string), 64)
-    s.YearHigh, _ = strconv.ParseFloat(v["YearHigh"].(string), 64)
-    s.MarketCapitalization = v["MarketCapitalization"].(string)
-    s.LastTradePriceOnly, _ = strconv.ParseFloat(v["LastTradePriceOnly"].(string), 64)
-    s.DaysRange = v["DaysRange"].(string)
-    s.Volume, _ = strconv.ParseUint(v["Volume"].(string), 0, 64)
-    s.StockExchange = v["StockExchange"].(string)
+func (q *Quote) Populate(v map[string]interface{}) {
+    q.Name = v["Name"].(string)
+    q.Symbol = v["Symbol"].(string)
+    q.AvgDailyVolume, _ = strconv.ParseUint(v["AverageDailyVolume"].(string), 0, 64)
+    q.Change, _ = strconv.ParseFloat(v["Change"].(string), 64)
+    q.DaysLow, _ = strconv.ParseFloat(v["DaysLow"].(string), 64)
+    q.DaysHigh, _ = strconv.ParseFloat(v["DaysHigh"].(string), 64)
+    q.YearLow, _ = strconv.ParseFloat(v["YearLow"].(string), 64)
+    q.YearHigh, _ = strconv.ParseFloat(v["YearHigh"].(string), 64)
+    q.MarketCapitalization = v["MarketCapitalization"].(string)
+    q.LastTradePriceOnly, _ = strconv.ParseFloat(v["LastTradePriceOnly"].(string), 64)
+    q.DaysRange = v["DaysRange"].(string)
+    q.Volume, _ = strconv.ParseUint(v["Volume"].(string), 0, 64)
+    q.StockExchange = v["StockExchange"].(string)
 }
 
-func GetQuote(y *stockfeed.YQL, name string) (Symbol, error){
+func GetQuote(y *stockfeed.YQL, name string) (Quote, error){
     query := stockfeed.BuildQuery([]string{"*"}, []string{quoteTable}, []string{"symbol = \"" + name + "\""})
     r, err := y.Query(query)
 
     if err != nil{
-        return Symbol{}, err
+        return Quote{}, err
     }
 
-    s := Symbol{}
-    s.Populate((r.Results["quote"]).(map[string]interface{}))
+    q := Quote{}
+    q.Populate((r.Results["quote"]).(map[string]interface{}))
 
-    return s, nil
+    return q, nil
 }
 
-func GetQuotes(y *stockfeed.YQL, names []string) ([]Symbol, error){
+func GetQuotes(y *stockfeed.YQL, names []string) ([]Quote, error){
     symbols := make([]string, len(names))
     for i, s := range names{
         symbols[i] = "symbol = \"" + s + "\""
@@ -71,9 +71,9 @@ func GetQuotes(y *stockfeed.YQL, names []string) ([]Symbol, error){
     }
 
     quotes := r.Results["quote"].([]interface{})
-    ret := make([]Symbol, len(names))
+    ret := make([]Quote, len(names))
     for i, q := range quotes {
-        z := Symbol{}
+        z := Quote{}
         z.Populate(q.(map[string]interface{}))
         ret[i] = z
     }
@@ -81,17 +81,17 @@ func GetQuotes(y *stockfeed.YQL, names []string) ([]Symbol, error){
     return ret, nil
 }
 
-func (s Symbol) String() string {
+func (q Quote) String() string {
     var buf bytes.Buffer
 
-    buf.WriteString("Name: " + s.Name + " (" + s.Symbol + ")\n")
-    buf.WriteString("Stock Exchange: " + s.StockExchange + "\n")
-    buf.WriteString("Average Daily Volume: " + strconv.FormatUint(s.AvgDailyVolume, 10) + "\n")
-    buf.WriteString("Days Range - High: " + strconv.FormatFloat(s.DaysHigh, 'f', 2, 64) + " Low: " + strconv.FormatFloat(s.DaysLow, 'f', 2, 64) + "\n")
-    buf.WriteString("Change: " + strconv.FormatFloat(s.Change, 'f', 2, 64) + "\n")
-    buf.WriteString("Last Trade Price: " + strconv.FormatFloat(s.LastTradePriceOnly, 'f', 2, 64) + "\n")
-    buf.WriteString("Year High: " + strconv.FormatFloat(s.YearHigh, 'f', 2, 64) + " Low: " + strconv.FormatFloat(s.YearLow, 'f', 2, 64) + "\n")
-    buf.WriteString("Volume: " + strconv.FormatUint(s.Volume, 10) + "\n")
+    buf.WriteString("Name: " + q.Name + " (" + q.Symbol + ")\n")
+    buf.WriteString("Stock Exchange: " + q.StockExchange + "\n")
+    buf.WriteString("Average Daily Volume: " + strconv.FormatUint(q.AvgDailyVolume, 10) + "\n")
+    buf.WriteString("Days Range - High: " + strconv.FormatFloat(q.DaysHigh, 'f', 2, 64) + " Low: " + strconv.FormatFloat(q.DaysLow, 'f', 2, 64) + "\n")
+    buf.WriteString("Change: " + strconv.FormatFloat(q.Change, 'f', 2, 64) + "\n")
+    buf.WriteString("Last Trade Price: " + strconv.FormatFloat(q.LastTradePriceOnly, 'f', 2, 64) + "\n")
+    buf.WriteString("Year High: " + strconv.FormatFloat(q.YearHigh, 'f', 2, 64) + " Low: " + strconv.FormatFloat(q.YearLow, 'f', 2, 64) + "\n")
+    buf.WriteString("Volume: " + strconv.FormatUint(q.Volume, 10) + "\n")
 
     return buf.String()
 }
