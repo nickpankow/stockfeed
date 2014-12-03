@@ -44,7 +44,7 @@ func (s *Symbol) Populate(v map[string]interface{}) {
 }
 
 func GetQuote(y *stockfeed.YQL, name string) (Symbol, error){
-    query := stockfeed.BuildQuery([]string{"*"}, []string{quoteTable}, []string{name})
+    query := stockfeed.BuildQuery([]string{"*"}, []string{quoteTable}, []string{"symbol = \"" + name + "\""})
     r, err := y.Query(query)
 
     if err != nil{
@@ -55,6 +55,30 @@ func GetQuote(y *stockfeed.YQL, name string) (Symbol, error){
     s.Populate((r.Results["quote"]).(map[string]interface{}))
 
     return s, nil
+}
+
+func GetQuotes(y *stockfeed.YQL, names []string) ([]Symbol, error){
+    symbols := make([]string, len(names))
+    for i, s := range names{
+        symbols[i] = "symbol = \"" + s + "\""
+    }
+
+    query := stockfeed.BuildQuery([]string{"*"}, []string{quoteTable}, symbols)
+    r, err := y.Query(query)
+
+    if err != nil{
+        return nil, err
+    }
+
+    quotes := r.Results["quote"].([]interface{})
+    ret := make([]Symbol, len(names))
+    for i, q := range quotes {
+        z := Symbol{}
+        z.Populate(q.(map[string]interface{}))
+        ret[i] = z
+    }
+
+    return ret, nil
 }
 
 func (s Symbol) String() string {

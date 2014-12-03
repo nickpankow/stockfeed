@@ -89,7 +89,7 @@ func BuildQuery(fields []string, tables []string, where []string) (string) {
     query_buffer.WriteString(" where ")
     for key, value := range where{
         if key > 0 {
-            query_buffer.WriteString(" AND ")
+            query_buffer.WriteString(" OR ")
         }
         query_buffer.WriteString(value) 
     }
