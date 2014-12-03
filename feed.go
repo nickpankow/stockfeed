@@ -12,6 +12,12 @@ const YQL_URL = "https://query.yahooapis.com/v1/public/yql?"
 const YQL_ENV = "env=http://datatables.org/alltables.env"
 const YQL_FMT = "format=json"
 
+type QueryResponse struct {
+    created, lang string
+    results map[string]interface{}
+
+}
+
 func buildQuery(fields []string, tables []string, where []string) (string) {
     // Validate
     if len(fields) == 0 || len(tables) == 0 || len(where) == 0{

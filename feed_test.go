@@ -10,7 +10,7 @@ func TestQuery(t *testing.T) {
     query_string := buildQuery([]string{"Change","YearHigh","YearLow"}, []string{"yahoo.finance.quote"}, []string{"symbol = \"YHOO\""})
     resp_obj, err := query(query_string)
     if err == nil{
-        fmt.Print(resp_obj["query"], "\n")
+        fmt.Println(resp_obj["query"])
         query_obj := (resp_obj["query"]).(map[string]interface{})
         result_obj := (query_obj["results"]).(map[string]interface{})
         quote_obj := (result_obj["quote"]).(map[string]interface{})
