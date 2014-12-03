@@ -1,23 +1,50 @@
 package stockfeed
 
 import (
-    // "net/url"
-    // "net/http"
-    // "io/ioutil"
-    // "bytes"
-    // "encoding/json"
+    "net/url"
+    "net/http"
+    "io/ioutil"
+    "bytes"
+    "encoding/json"
 )
 
 type YQL struct {
-  Url, Env, Fmt, ApiKey string
+    Url, Env, Fmt string
 }
 
-// map(string)interface{}
-func (y *YQL) Query(q string) (string, error){
+type Response struct{
+    Created, Lang string
+    Results map[string]interface{}
+}
 
+func (y *YQL) Query(q string) (Response, error){
+    var r Response
+    queryUrl := y.buildURL(q)
+    resp, err := http.Get(queryUrl)
+    
+    // HTTP error
+    if err != nil {
+        return r, err
+    }
+    
+    resp_str, err := ioutil.ReadAll(resp.Body)
+    // Read error
+    if err != nil {
+        return r, err
+    }
+    defer resp.Body.Close()
+    
+    var jsonArray map[string]interface{}
+    err = json.Unmarshal(resp_str, &jsonArray)
 
+    jsonArray = (jsonArray["query"]).(map[string]interface{})
+    r = Response{ jsonArray["created"].(string), jsonArray["lang"].(string), jsonArray["results"].(map[string]interface{}) }
 
-    return "", nil
+    return r, err
+}
+
+func (y *YQL) buildURL(query string) (string){
+    return y.Url + "?q=" + url.QueryEscape(query) + "&format=" + y.Fmt + "&env=" + url.QueryEscape(y.Env)
 }
 
 // Helper function to create queries
