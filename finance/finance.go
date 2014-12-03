@@ -4,16 +4,14 @@ import (
     "github.com/nickpankow/stockfeed"
     "bytes"
     "strconv"
+    // "time"
 )
 
-// type Currency float64
+const quoteTable = "yahoo.finance.quote" // YQL quote table
 
-// type Quote struct {
-
-// }
-
-const quoteTable = "yahoo.finance.quote"
-
+/**
+    Stores data for a single Stock Quote
+ */
 type Quote struct {
     Name, Symbol string
     AvgDailyVolume uint64
@@ -27,6 +25,10 @@ type Quote struct {
     StockExchange string
 }
 
+/**
+    Populate a Quote struct with the data contained in a map with key-value pairs
+    matching the member variable names.
+ */
 func (q *Quote) Populate(v map[string]interface{}) {
     q.Name = v["Name"].(string)
     q.Symbol = v["Symbol"].(string)
@@ -43,8 +45,11 @@ func (q *Quote) Populate(v map[string]interface{}) {
     q.StockExchange = v["StockExchange"].(string)
 }
 
-func GetQuote(y *stockfeed.YQL, name string) (Quote, error){
-    query := stockfeed.BuildQuery([]string{"*"}, []string{quoteTable}, []string{"symbol = \"" + name + "\""})
+/**
+    Fetch the latest stock quote for a given stock symbol.
+ */
+func GetQuote(y *stockfeed.YQL, symbol string) (Quote, error){
+    query := stockfeed.BuildQuery([]string{"*"}, []string{quoteTable}, []string{"symbol = \"" + symbol + "\""}, true)
     r, err := y.Query(query)
 
     if err != nil{
@@ -57,13 +62,16 @@ func GetQuote(y *stockfeed.YQL, name string) (Quote, error){
     return q, nil
 }
 
+/**
+    Fetch the latest stock quote for a group of given stock symbols.
+ */
 func GetQuotes(y *stockfeed.YQL, names []string) ([]Quote, error){
     symbols := make([]string, len(names))
     for i, s := range names{
         symbols[i] = "symbol = \"" + s + "\""
     }
 
-    query := stockfeed.BuildQuery([]string{"*"}, []string{quoteTable}, symbols)
+    query := stockfeed.BuildQuery([]string{"*"}, []string{quoteTable}, symbols, false)
     r, err := y.Query(query)
 
     if err != nil{
@@ -81,6 +89,10 @@ func GetQuotes(y *stockfeed.YQL, names []string) ([]Quote, error){
     return ret, nil
 }
 
+
+/**
+    Pretty fmt.Print printing for the Quote struct
+ */
 func (q Quote) String() string {
     var buf bytes.Buffer
 
