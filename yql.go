@@ -8,15 +8,19 @@ import (
     "encoding/json"
 )
 
+// Represents an instance of the YQL Api
 type YQL struct {
     Url, Env, Fmt string
 }
 
+// Represents the response received from a Query()
 type Response struct{
     Created, Lang string
     Results map[string]interface{}
 }
 
+// Send a YQL query to the Yahoo! servers specified in the YQL object.  Returns Response struct with
+// response from server.
 func (y *YQL) Query(q string) (Response, error){
     var r Response
     queryUrl := y.buildURL(q)
@@ -34,9 +38,15 @@ func (y *YQL) Query(q string) (Response, error){
     }
     defer resp.Body.Close()
     
+    // Build the Response
     var jsonArray map[string]interface{}
     err = json.Unmarshal(resp_str, &jsonArray)
+    // JSON error
+    if err != nil {
+        return r, err
+    }
 
+    // TODO: Revisit once understand of type system is better.  Lacks safety (i think?)
     jsonArray = (jsonArray["query"]).(map[string]interface{})
     r = Response{ jsonArray["created"].(string), jsonArray["lang"].(string), jsonArray["results"].(map[string]interface{}) }
 
@@ -86,3 +96,4 @@ func BuildQuery(fields []string, tables []string, where []string) (string) {
     
     return query_buffer.String()
 }
+
