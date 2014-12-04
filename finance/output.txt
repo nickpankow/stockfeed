@@ -1,0 +1,6 @@
+Symbol: YHOO
+Start: 2013-01-01 End Date: 2013-12-31
+Average Close: 27.74
+Historical Data Points: 252
+PASS
+ok  	github.com/nickpankow/stockfeed/finance	1.417s
