@@ -4,7 +4,8 @@ import (
     "github.com/nickpankow/stockfeed"
     "strconv"
     "bytes"
-    // "fmt"
+    "time"
+    "strings"
 )
 
 const historyTable = "yahoo.finance.historicaldata"
@@ -60,6 +61,28 @@ func GetHistoricalData(y *stockfeed.YQL, symbol, start, end string) (*StockHisto
     return s, nil
 }
 
+/**
+    Return the Closing date as time.Time
+ */
+func (h *HistoricalQuote) ClosingDate() (time.Time){
+    s := strings.Split(h.Date, "-")
+    if len(s) != 3{
+        // Parsing Error
+        return time.Time{}
+    }
+
+    var y,m,d int
+    var err error
+    y, err = strconv.Atoi(s[0])
+    m, err = strconv.Atoi(s[1])
+    d, err = strconv.Atoi(s[2])
+    if err != nil{
+        return time.Time{}
+    }
+
+    loc,_ := time.LoadLocation("Local")
+    return time.Date(y, time.Month(m), d, 0, 0, 0, 0, loc)
+}
 
 /**
     Calculate Average Closing Price of a given StockHistory
