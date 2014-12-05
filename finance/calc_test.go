@@ -6,6 +6,17 @@ import(
 )
 
 
+// func makeHistory(c int) ([]HistoricalQuote]){
+//     h := make([]HistoricalQuote,c)
+//     for i := 0; i < c; i++{
+//         hq := HistoricalQuote{}
+//         hq.Close = float64(i + 2)
+//         h.History[i] = hq
+//     }
+
+//     return h
+// }
+
 func TestCalcAvgClose(t *testing.T){
     q := new(StockHistory)
     q.History = make([]HistoricalQuote,10)
@@ -25,4 +36,20 @@ func TestCalcAvgClose(t *testing.T){
         t.Errorf("Average Close (%s) did not match expected (%s)", a, aCheck)
     }
     fmt.Println("Average Close: ", a)
+}
+
+func TestCalcRollingAvgClose(t *testing.T){
+    q := new(StockHistory)
+    q.History = make([]HistoricalQuote,10)
+
+    check := 0
+    i := 0
+    for i = 0; i < 10; i++{
+        hq := HistoricalQuote{}
+        hq.Close = float64(i + 2)
+        // Add Dates
+        check += (i + 2)
+        q.History[i] = hq
+    }
+    
 }

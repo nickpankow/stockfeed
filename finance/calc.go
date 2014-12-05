@@ -1,7 +1,8 @@
 package finance
 
-// import (
-// )
+import (
+    "time"
+)
 
 func CalcAvgClose(s *StockHistory) float64{
     var sum float64
@@ -9,4 +10,8 @@ func CalcAvgClose(s *StockHistory) float64{
         sum += q.Close
     }
     return sum / float64(len(s.History))
+}
+
+func CalcRollingAvgClose(s *StockHistory, t time.Time, r int){
+    
 }
