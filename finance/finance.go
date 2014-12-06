@@ -1,7 +1,7 @@
 package finance
 
 import (
-    "github.com/nickpankow/stockfeed"
+    "github.com/nickpankow/yql"
     "bytes"
     "strconv"
     // "time"
@@ -48,8 +48,8 @@ func (q *Quote) Populate(v map[string]interface{}) {
 /**
     Fetch the latest stock quote for a given stock symbol.
  */
-func GetQuote(y *stockfeed.YQL, symbol string) (Quote, error){
-    query := stockfeed.BuildQuery([]string{"*"}, []string{quoteTable}, []string{"symbol = \"" + symbol + "\""}, true)
+func GetQuote(y *yql.YQL, symbol string) (Quote, error){
+    query := yql.BuildQuery([]string{"*"}, []string{quoteTable}, []string{"symbol = \"" + symbol + "\""}, true)
     r, err := y.Query(query)
 
     if err != nil{
@@ -65,13 +65,13 @@ func GetQuote(y *stockfeed.YQL, symbol string) (Quote, error){
 /**
     Fetch the latest stock quote for a group of given stock symbols.
  */
-func GetQuotes(y *stockfeed.YQL, names []string) ([]Quote, error){
+func GetQuotes(y *yql.YQL, names []string) ([]Quote, error){
     symbols := make([]string, len(names))
     for i, s := range names{
         symbols[i] = "symbol = \"" + s + "\""
     }
 
-    query := stockfeed.BuildQuery([]string{"*"}, []string{quoteTable}, symbols, false)
+    query := yql.BuildQuery([]string{"*"}, []string{quoteTable}, symbols, false)
     r, err := y.Query(query)
 
     if err != nil{

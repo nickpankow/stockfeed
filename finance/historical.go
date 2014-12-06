@@ -1,7 +1,7 @@
 package finance
 
 import (
-    "github.com/nickpankow/stockfeed"
+    "github.com/nickpankow/yql"
     "strconv"
     "bytes"
     "time"
@@ -36,8 +36,8 @@ type StockHistory struct {
 /**
     Fetch historical data for a given stock symbol.
  */
-func GetHistoricalData(y *stockfeed.YQL, symbol, start, end string) (*StockHistory, error){
-    query := stockfeed.BuildQuery([]string{"*"}, []string{historyTable}, []string{"symbol = \"" + symbol + "\"", "startDate = \"" + start + "\"", "endDate = \"" + end + "\""}, true)
+func GetHistoricalData(y *yql.YQL, symbol, start, end string) (*StockHistory, error){
+    query := yql.BuildQuery([]string{"*"}, []string{historyTable}, []string{"symbol = \"" + symbol + "\"", "startDate = \"" + start + "\"", "endDate = \"" + end + "\""}, true)
     r, err := y.Query(query)
 
     if err != nil{

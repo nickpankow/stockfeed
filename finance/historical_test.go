@@ -2,13 +2,13 @@ package finance
 
 import (
     "testing"
-    "github.com/nickpankow/stockfeed"
+    "github.com/nickpankow/yql"
     "fmt"
     "time"
 )
 
 func TestGetHistoricalData(t *testing.T) {
-    y := stockfeed.YQL{"https://query.yahooapis.com/v1/public/yql", "http://datatables.org/alltables.env", "json"}
+    y := yql.YQL{"https://query.yahooapis.com/v1/public/yql", "http://datatables.org/alltables.env", "json"}
     h, err := GetHistoricalData(&y, "YHOO", "2013-01-01", "2013-12-31")
     
     if err != nil {
