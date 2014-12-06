@@ -37,7 +37,7 @@ type StockHistory struct {
     Fetch historical data for a given stock symbol.
  */
 func GetHistoricalData(y *yql.YQL, symbol, start, end string) (*StockHistory, error){
-    query := yql.BuildQuery([]string{"*"}, []string{historyTable}, []string{"symbol = \"" + symbol + "\"", "startDate = \"" + start + "\"", "endDate = \"" + end + "\""}, true)
+    query := yql.BuildQuery([]string{"*"}, []string{historyTable}, []string{"symbol = \"" + symbol + "\"", "startDate = \"" + start + "\"", "endDate = \"" + end + "\""}, []bool{true})
     r, err := y.Query(query)
 
     if err != nil{

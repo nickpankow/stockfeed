@@ -49,7 +49,7 @@ func (q *Quote) Populate(v map[string]interface{}) {
     Fetch the latest stock quote for a given stock symbol.
  */
 func GetQuote(y *yql.YQL, symbol string) (Quote, error){
-    query := yql.BuildQuery([]string{"*"}, []string{quoteTable}, []string{"symbol = \"" + symbol + "\""}, true)
+    query := yql.BuildQuery([]string{"*"}, []string{quoteTable}, []string{"symbol = \"" + symbol + "\""}, []bool{true})
     r, err := y.Query(query)
 
     if err != nil{
@@ -71,7 +71,7 @@ func GetQuotes(y *yql.YQL, names []string) ([]Quote, error){
         symbols[i] = "symbol = \"" + s + "\""
     }
 
-    query := yql.BuildQuery([]string{"*"}, []string{quoteTable}, symbols, false)
+    query := yql.BuildQuery([]string{"*"}, []string{quoteTable}, symbols, []bool{false})
     r, err := y.Query(query)
 
     if err != nil{
