@@ -3,17 +3,33 @@ package finance
 import (
     "testing"
     "github.com/nickpankow/yql"
-    "fmt"
+    // "fmt"
 )
 
 func TestGetQuote(t *testing.T) {
     y := yql.YQL{"https://query.yahooapis.com/v1/public/yql", "http://datatables.org/alltables.env", "json"}
-    _, err := GetQuote(&y, "YHOO")
+    q, err := GetQuote(&y, "YHOO")
     
     if err != nil {
         t.Errorf("Query Error: %s", err)
     }
-    fmt.Print()
+    // fmt.Print(q)
+
+    // Test Symbol that exists but has no data
+    q, err = GetQuote(&y, "APPL")
+    
+    if err != nil {
+        t.Errorf("Query Error: %s", err)
+    }
+    // fmt.Print(q)
+
+    // Test Symbol that does not exist
+    q, err = GetQuote(&y, "QQQQQ")
+    
+    if err != nil {
+        t.Errorf("Query Error: %s", err)
+    }
+    // fmt.Print(q)
 }
 
 func TestGetQuotes(t *testing.T) {

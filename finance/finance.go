@@ -4,7 +4,6 @@ import (
     "github.com/nickpankow/yql"
     "bytes"
     "strconv"
-    // "time"
 )
 
 const quoteTable = "yahoo.finance.quote" // YQL quote table
@@ -25,24 +24,66 @@ type Quote struct {
     StockExchange string
 }
 
+func mapParameterOrEmptyStr(param string, m map[string]interface{}) string {
+    s, ok := m[param]
+    if !ok || s == nil {
+        return ""
+    }
+    return s.(string)
+}
+
+func parseFloatOrDefault(s string, d float64) float64 {
+    f, err := strconv.ParseFloat(s, 64)
+    if err != nil {
+        return d
+    }
+    return f
+}
+
 /**
     Populate a Quote struct with the data contained in a map with key-value pairs
     matching the member variable names.
  */
 func (q *Quote) Populate(v map[string]interface{}) {
-    q.Name = v["Name"].(string)
-    q.Symbol = v["Symbol"].(string)
-    q.AvgDailyVolume, _ = strconv.ParseUint(v["AverageDailyVolume"].(string), 0, 64)
-    q.Change, _ = strconv.ParseFloat(v["Change"].(string), 64)
-    q.DaysLow, _ = strconv.ParseFloat(v["DaysLow"].(string), 64)
-    q.DaysHigh, _ = strconv.ParseFloat(v["DaysHigh"].(string), 64)
-    q.YearLow, _ = strconv.ParseFloat(v["YearLow"].(string), 64)
-    q.YearHigh, _ = strconv.ParseFloat(v["YearHigh"].(string), 64)
-    q.MarketCapitalization = v["MarketCapitalization"].(string)
-    q.LastTradePriceOnly, _ = strconv.ParseFloat(v["LastTradePriceOnly"].(string), 64)
-    q.DaysRange = v["DaysRange"].(string)
-    q.Volume, _ = strconv.ParseUint(v["Volume"].(string), 0, 64)
-    q.StockExchange = v["StockExchange"].(string)
+    var err error
+    var str string
+
+    q.Name = mapParameterOrEmptyStr("Name", v)
+    q.Symbol = mapParameterOrEmptyStr("Symbol", v)
+
+    str = mapParameterOrEmptyStr("AverageDailyVolume", v)
+    if q.AvgDailyVolume, err = strconv.ParseUint(str, 0, 64); err != nil {
+        q.AvgDailyVolume = 0
+    }
+
+    str = mapParameterOrEmptyStr("Change", v)
+    q.Change = parseFloatOrDefault(str, 0.0)
+
+    str = mapParameterOrEmptyStr("DaysLow", v)
+    q.DaysLow = parseFloatOrDefault(str, 0.0)
+
+    str = mapParameterOrEmptyStr("DaysHigh", v)
+    q.DaysHigh = parseFloatOrDefault(str, 0.0)
+
+    str = mapParameterOrEmptyStr("YearLow", v)
+    q.YearLow = parseFloatOrDefault(str, 0.0)
+
+    str = mapParameterOrEmptyStr("YearHigh", v)
+    q.YearHigh = parseFloatOrDefault(str, 0.0)
+
+    q.MarketCapitalization = mapParameterOrEmptyStr("MarketCapitalization", v)
+
+    str = mapParameterOrEmptyStr("LastTradePriceOnly", v)
+    q.LastTradePriceOnly = parseFloatOrDefault(str, 0.0)
+
+    q.DaysRange = mapParameterOrEmptyStr("DaysRange", v)
+
+    str = mapParameterOrEmptyStr("Volume", v)
+    if q.Volume, err = strconv.ParseUint(str, 0, 64); err != nil {
+        q.Volume = 0
+    }
+
+    q.StockExchange = mapParameterOrEmptyStr("StockExchange", v)
 }
 
 /**

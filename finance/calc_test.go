@@ -2,7 +2,6 @@ package finance
 
 import(
     "testing"
-    "fmt"
 )
 
 
@@ -35,7 +34,6 @@ func TestCalcAvgClose(t *testing.T){
     if aCheck != a {
         t.Errorf("Average Close (%s) did not match expected (%s)", a, aCheck)
     }
-    fmt.Println("Average Close: ", a)
 }
 
 func TestCalcRollingAvgClose(t *testing.T){
